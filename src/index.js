@@ -1,11 +1,12 @@
 const Hapi = require('@hapi/hapi');
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
+const textRoutes = require('./routes/textRoutes');
+const pdfRoutes = require('./routes/pdfRoutes');
 
-// Create a new Hapi server instance
 const server = Hapi.server({
-    port: 3000,
-    host: 'localhost',
+    host: process.env.NODE_ENV !== 'production' ? 'localhost' : '0.0.0.0',
+    port: process.env.PORT || 3000 
 });
 
 // Add routes
