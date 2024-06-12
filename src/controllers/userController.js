@@ -20,7 +20,6 @@ const register = async (request, h) => {
             name,
             email,
             password: hashedPassword,
-            address: "-"
         });
 
         return h.response({ message: 'User created' }).code(201);
@@ -53,7 +52,6 @@ const login = async (request, h) => {
                 data: {
                     id: user.email,
                     name: user.name,
-                    address: user.address,
                 },
                 token
             }).code(200);
