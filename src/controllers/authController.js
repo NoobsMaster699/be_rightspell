@@ -1,8 +1,7 @@
 const { google } = require('googleapis');
 const admin = require('firebase-admin');
 const jwt = require('jsonwebtoken');
-const oauth2Client = require('../config/firebase').oauth2Client;
-const validTokens = require('../config/firebase').validTokens;
+const { oauth2Client, validTokens } = require('../config/firebase');
 const generateToken = require('../utils/generateToken');
 
 // Google OAuth Sign-in Handler
@@ -37,24 +36,19 @@ const googleCallback = async (request, h) => {
             return h.response({ data }).code(400);
         }
 
-        const userRef = admin.firestore().collection('users').doc(data.email);
+        const userRef = admin.firestore().collection('users').doc(); // Create a new document with automatic ID
         await userRef.set({
-            name: data.name,
             email: data.email,
-            address: "-",
+            name: data.name,
+            photo: data.picture || null, // Use profile picture if available, or null
+           
         });
 
-        const user = {
-            email: data.email,
-            name: data.name,
-            address: "-"
-        };
-
-        const token = generateToken(user);
+        const token = generateToken({ id: userRef.id, ...data }); // Use the automatically generated document ID
         validTokens.add(token);
 
         return h.response({
-            data: user,
+            data: { id: userRef.id, ...data },
             token
         }).code(200);
     } catch (error) {
@@ -65,13 +59,24 @@ const googleCallback = async (request, h) => {
 
 // Logout Handler
 const logout = (request, h) => {
-    const token = request.headers.authorization?.split(' ')[1];
+    const authHeader = request.headers.authorization;
+    if (!authHeader) {
+        return h.response({ message: 'Authorization header missing' }).code(403);
+    }
 
-    if (token && validTokens.has(token)) {
-        validTokens.delete(token);
-        return h.response({ message: 'Logout successful' }).code(200);
-    } else {
+    const token = authHeader.split(' ')[1];
+    if (!validTokens.has(token)) {
         return h.response({ message: 'Invalid token' }).code(403);
+    }
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        validTokens.delete(token);
+
+        return h.response({ message: 'Logout successful', userId: decoded.id }).code(200);
+    } catch (error) {
+        console.error('Error during logout:', error);
+        return h.response({ message: 'Internal Server Error' }).code(500);
     }
 };
 

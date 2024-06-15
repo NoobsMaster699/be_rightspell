@@ -1,19 +1,33 @@
-const authController = require('../controllers/authController');
+// routes/authRoutes.js
+
+const { googleSignIn, googleCallback, logout } = require('../controllers/authController');
 
 module.exports = [
     {
         method: 'GET',
         path: '/auth/google',
-        handler: authController.googleSignIn
+        handler: googleSignIn,
+        options: {
+            tags: ['api'],
+            description: 'Initiate Google OAuth sign-in',
+        },
     },
     {
         method: 'GET',
         path: '/auth/google/callback',
-        handler: authController.googleCallback
+        handler: googleCallback,
+        options: {
+            tags: ['api'],
+            description: 'Callback URL for Google OAuth',
+        },
     },
     {
-        method: 'GET',
+        method: 'POST',
         path: '/logout',
-        handler: authController.logout
-    }
+        handler: logout,
+        options: {
+            tags: ['api'],
+            description: 'Logout from the application',
+        },
+    },
 ];
