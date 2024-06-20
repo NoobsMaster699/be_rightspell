@@ -318,4 +318,5 @@ env_variables:
   FIREBASE_PROJECT_ID: "your_firebase_project_id"
   GOOGLE_CLIENT_ID: "your_google_client_id"
   GOOGLE_CLIENT_SECRET: "your_google_client_secret"
-  JWT_SECRET: "your_jwt_secret"```
+  JWT_SECRET: "your_jwt_secret"
+```
