@@ -269,7 +269,7 @@ Copy code
 ### Environment Variables
 
 Create a `.env` file in the root directory of your project with the following content:
-```json
+```bash
 FIREBASE_PROJECT_ID=your_firebase_project_id
 GOOGLE_CLIENT_ID=your_google_client_id
 GOOGLE_CLIENT_SECRET=your_google_client_secret
@@ -312,7 +312,7 @@ This project can be deployed on Google App Engine. Follow these steps:
 ### Example App Engine Configuration
 
 Create an `app.yaml` file in the root directory of your project with the following content:
-```json
+```bash
 runtime: nodejs14
 
 env_variables:
