@@ -54,29 +54,26 @@ This REST API provides endpoints for user registration, login, logout, text corr
 
 #### Example Request
 
-json
-
-Copy code
-
-`{
+```json
+{
   "email": "johndoe@example.com",
   "password": "securepassword123"
-}` 
+}
+``` 
 
 #### Example Response
 
-json
 
-Copy code
-
-`{
+```json
+{
   "data": {
     "id": "johndoe@example.com",
     "name": "John Doe",
     "address": "-"
   },
   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-}`
+}
+```
 
 ### 3. User Logout
 
@@ -99,22 +96,20 @@ Copy code
 
 #### Example Request
 
-http
 
-Copy code
-
-`POST /logout
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...` 
+```bash
+POST /logout
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+``` 
 
 #### Example Response
 
-json
 
-Copy code
-
-`{
+```json
+{
   "message": "Logout successful"
-}` 
+}
+``` 
 
 
 
@@ -140,23 +135,22 @@ Copy code
 
 #### Example Request
 
-json
 
-Copy code
-
-`{
+```json
+{
   "text": "This is an exampel of incorret text."
-}` 
+}
+``` 
 
 #### Example Response
 
-json
 
-Copy code
 
-`{
+```json
+{
   "correctedText": "This is an example of incorrect text."
-}` 
+}
+``` 
 
 ### 5. PDF Upload and Correction
 
