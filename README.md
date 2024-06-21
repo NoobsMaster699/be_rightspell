@@ -238,18 +238,18 @@ Copy code
 
 #### Example Response
 
-json
 
-Copy code
 
-`{
+```json
+{
   "data": {
     "email": "johndoe@example.com",
     "name": "John Doe",
     "address": "-"
   },
   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-}` 
+}
+```
 
 ## Setup and Deployment
 
