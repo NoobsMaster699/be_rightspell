@@ -1,4 +1,4 @@
-// routes/authRoutes.js
+
 
 const { googleSignIn, googleCallback, logout } = require('../controllers/authController');
 
