@@ -20,42 +20,60 @@ const googleSignIn = (request, h) => {
 
 // Google OAuth Callback Handler
 const googleCallback = async (request, h) => {
-    try {
-        const { code } = request.query;
-        const { tokens } = await oauth2Client.getToken(code);
-        oauth2Client.setCredentials(tokens);
+  try {
+      const { code } = request.query;
+      const { tokens } = await oauth2Client.getToken(code);
+      oauth2Client.setCredentials(tokens);
 
-        const oauth2 = google.oauth2({
-            auth: oauth2Client,
-            version: 'v2'
-        });
+      const oauth2 = google.oauth2({
+          auth: oauth2Client,
+          version: 'v2'
+      });
 
-        const { data } = await oauth2.userinfo.get();
+      const { data } = await oauth2.userinfo.get();
 
-        if (!data.email || !data.name) {
-            return h.response({ data }).code(400);
-        }
+      if (!data.email || !data.name) {
+          return h.response({ message: 'Invalid user data' }).code(400);
+      }
 
-        const userRef = admin.firestore().collection('users').doc(); // Create a new document with automatic ID
-        await userRef.set({
-            email: data.email,
-            name: data.name,
-            photo: data.picture || null, // Use profile picture if available, or null
-           
-        });
+      const userCollection = admin.firestore().collection('users');
+      const userQuery = await userCollection.where('email', '==', data.email).limit(1).get();
 
-        const token = generateToken({ id: userRef.id, ...data }); // Use the automatically generated document ID
-        validTokens.add(token);
+      let userRef;
+      const timestamp = admin.firestore.FieldValue.serverTimestamp();
 
-        return h.response({
-            data: { id: userRef.id, ...data },
-            token
-        }).code(200);
-    } catch (error) {
-        console.error('Error during Google OAuth callback:', error);
-        return h.response({ message: 'Internal Server Error' }).code(500);
-    }
+      if (userQuery.empty) {
+          userRef = userCollection.doc();
+          await userRef.set({
+              email: data.email,
+              name: data.name,
+              photo: data.picture || null,
+              createdAt: timestamp,
+              updatedAt: timestamp
+          });
+      } else {
+          userRef = userQuery.docs[0].ref;
+          await userRef.update({
+              name: data.name,
+              photo: data.picture || null,
+              updatedAt: timestamp
+          });
+      }
+
+      const token = generateToken({ id: userRef.id, email: data.email, name: data.name, photo: data.picture });
+      validTokens.add(token);
+
+      return h.response({
+          data: { id: userRef.id, email: data.email, name: data.name, photo: data.picture },
+          token
+      }).code(200);
+  } catch (error) {
+      console.error('Error during Google OAuth callback:', error);
+      return h.response({ message: 'Internal Server Error' }).code(500);
+  }
 };
+
+  
 
 // Logout Handler
 const logout = (request, h) => {

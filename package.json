@@ -12,6 +12,7 @@
   "dependencies": {
     "@hapi/hapi": "^21.3.9",
     "@hapi/inert": "^7.1.0",
+    "@hapi/joi": "^17.1.1",
     "@hapi/vision": "^7.0.3",
     "@prisma/client": "^5.15.0",
     "bcrypt": "^5.1.1",
@@ -21,9 +22,11 @@
     "firebase-admin": "^12.1.1",
     "googleapis": "^139.0.0",
     "hapi": "^18.1.0",
+    "hapi-cors": "^1.0.3",
     "hapi-swagger": "^17.2.1",
     "joi": "^17.13.1",
     "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.1",
     "pdf-parse": "^1.1.1"
   }
 }

@@ -1,3 +1,4 @@
+// controllers/pdfController.js
 const fs = require('fs');
 const pdfParse = require('pdf-parse');
 const path = require('path');
@@ -12,7 +13,8 @@ const uploadAndCorrectPDF = async (request, h) => {
         file.pipe(fileStream);
 
         await new Promise((resolve, reject) => {
-            file.on('end', (err) => (err ? reject(err) : resolve()));
+            fileStream.on('finish', resolve);
+            fileStream.on('error', reject);
         });
 
         const dataBuffer = fs.readFileSync(filePath);
@@ -24,8 +26,8 @@ const uploadAndCorrectPDF = async (request, h) => {
         fs.writeFileSync(correctedFilePath, correctedText);
 
         return h.response({
-            message: 'PDF corrected successfully',
-            correctedText,
+            message: 'PDF extracted successfully',
+            text: correctedText,
             correctedFilePath,
         }).code(200);
     } catch (error) {

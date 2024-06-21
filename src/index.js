@@ -1,5 +1,4 @@
-// src/index.js
-
+// index.js
 const Hapi = require('@hapi/hapi');
 const Inert = require('@hapi/inert');
 const Vision = require('@hapi/vision');
@@ -13,7 +12,7 @@ const pdfRoutes = require('./routes/pdfRoutes');
 const init = async () => {
     const server = Hapi.server({
         host: process.env.NODE_ENV !== 'production' ? 'localhost' : '0.0.0.0',
-        port: process.env.PORT || 3000 
+        port: process.env.PORT || 3000,
     });
 
     // Register plugins
@@ -34,11 +33,25 @@ const init = async () => {
     // Add routes
     server.route([...authRoutes, ...userRoutes, ...pdfRoutes, ...textRoutes]);
 
-    // Start the server
+    server.route({
+        method: 'GET',
+        path: '/',
+        handler: (request, h) => {
+            return h.redirect('/documentation');
+        }
+    });
+
+    server.route({
+        method: '*',
+        path: '/{any*}',
+        handler: (request, h) => {
+            return h.response({ statusCode: 404, error: "Not Found", message: "Page not found" }).code(404);
+        }
+    });
+
     await server.start();
     console.log('Server running on %s', server.info.uri);
 
-    // Log server events for easier debugging
     server.events.on('response', (request) => {
         console.log(`${request.info.remoteAddress}: ${request.method.toUpperCase()} ${request.path} --> ${request.response.statusCode}`);
     });
